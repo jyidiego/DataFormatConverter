@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd ./PoCIWM/DataFormatConverter/test
+pushd ./DataFormatConverter/test
     dotnet restore
     dotnet test
     ret_code=$?
