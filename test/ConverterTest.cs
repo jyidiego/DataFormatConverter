@@ -76,7 +76,7 @@ QKFX4HK|11637319|18890073|1|B|JPMA||AUD|USD|.7499000000|54454.0000000000|2.16243
             Assert.Equal(result[1].TVersion, 1);
             Assert.Equal(result[1].TAction, "B");
             Assert.Equal(result[1].CorrectFlag, "N");
-            Assert.Equal(result[1].CancelFlag, "Y");
+            Assert.Equal(result[1].CancelFlag, "N");
             Assert.Equal(result[1].NDDFlag, String.Empty);
         }
     }
