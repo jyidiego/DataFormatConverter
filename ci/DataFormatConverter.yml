@@ -6,6 +6,6 @@ image_resource:
     repository: microsoft/dotnet
     tag: latest
 inputs:
-- name: PoCIWM
+- name: DataFormatConverter 
 run:
-  path: ./PoCIWM/DataFormatConverter/ci/test.sh
+  path: ./DataFormatConverter/ci/test.sh
