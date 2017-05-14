@@ -72,7 +72,6 @@ namespace DataFormatConverter
                     csv_doc.Append(String.Join(",", Attributes));
                     csv_doc.Append("\n");
                 }
-                Console.WriteLine(csv_doc.ToString());
                 return(csv_doc.ToString());
             }
             catch (Exception ex)
