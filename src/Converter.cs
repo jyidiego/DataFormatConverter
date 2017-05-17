@@ -20,9 +20,8 @@ namespace DataFormatConverter
 
     public class Converter
     {
-        public List<TOrder> CSV_to_Order(string csv_doc)
+        public IEnumerable<TOrder> CSV_to_Order(string csv_doc)
         {
-            var OrderList = new List<TOrder>();
 
             using (StringReader reader = new StringReader(csv_doc))
             {
@@ -31,17 +30,16 @@ namespace DataFormatConverter
                 while ((line = reader.ReadLine()) != null)
                 {
                     var data = line.Split(new[] { '|' });
-                    OrderList.Add(new TOrder() { AccountId = data[0],
+                    yield return new TOrder() { AccountId = data[0],
                                                 InstrumentId = int.Parse(data[1]),
                                                 TNumber = int.Parse(data[2]),
                                                 TVersion = int.Parse(data[3]),
                                                 TAction = data[4],
                                                 CorrectFlag = data[50],
                                                 CancelFlag = data[51],
-                                                NDDFlag = data[98] });
+                                                NDDFlag = data[98] };
                 }
             }
-            return OrderList;
         }
 
         public string XML_to_CSV(string xml_doc)
