@@ -14,4 +14,9 @@
     <ProjectReference Include="../src/DataFormatConverter.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="ConverterTest.cs">
+      <IncludeInPackage>false</IncludeInPackage>
+    </Compile>
+  </ItemGroup>
 </Project>

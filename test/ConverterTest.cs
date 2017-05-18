@@ -1,9 +1,10 @@
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Xunit;
 using DataFormatConverter;
+using Newtonsoft.Json;
 
 namespace DataFormatConverter.Tests
 {
@@ -12,11 +13,11 @@ namespace DataFormatConverter.Tests
         private readonly Converter _converter;
         private readonly string _xml_doc;
         private readonly string _csv_doc;
-        
+
         public DataFormatConverterTest()
         {
             _converter = new Converter();
-            _xml_doc = @"<Trade delimiter=""~"" header=""true"" date=""2017-01-18 06:09:03"" fileName=""CRD.CS_SMG_DW_APAC.Trade.0000389020"" sequence=""389020"" OUTPUT_LIMIT=""500"" TRADED_SEC_EXPORT_ID=""0"" OUTPUT_TYPE=""xml"" part=""13"">
+            _xml_doc = @"<Trade delimiter='~' header='true' date='2017-01-18 06:09:03' fileName='CRD.CS_SMG_DW_APAC.Trade.0000389020' sequence='389020' OUTPUT_LIMIT='500' TRADED_SEC_EXPORT_ID='0' OUTPUT_TYPE='xml' part='13'>
   <row>
     <EXT_SEC_ID>11644324</EXT_SEC_ID>    <!--InstrumentId-->
     <SEC_ID>248357100</SEC_ID>
@@ -29,21 +30,21 @@ namespace DataFormatConverter.Tests
     <ORDTR>SELLL</ORDTR>
     <REF_ID>1637606</REF_ID>
   </row>
-</Trade>"; 
+</Trade>";
             _csv_doc = @"AccountId|InstrumentId|TradeNumber|TradeVersion|TradeAction|CounterpartyId|StrategyId|CurrencyIdLocal|CurrencyIdSettle|FxRate|Quantity|PriceLocal|TradeDate|SettleDate|AllocationNumber|PricingFactor|TradingFactor|AccruedInterestLocal|PrincipalLocal|CommissionLocal|FeesLocal|ChargesLocal|LeviesLocal|SecFeesLocal|NetProceedsLocal|PriceSettlement|AccruedInterestSettlement|PrincipalSettlement|CommissionSettlement|FeesSettlement|ChargesSettlement|LeviesSettlement|SecFeesSettlement|NetProceedsSettlement|Comments|Yield|ClearingBrokerId|ClearingLocation|ProductDescription|DeliveryInstruction|SettlementInstruction|ExecutingUser|TransactionId|OrderId|AuditKey|TimeId|AsOfDateTime|Taxes|OtherFees|VAT|CorrectionFlag|CancelFlag|OASYSFlag|ExchangeId|Custodian|SecurityId|TraderId|ManagerId|IsProcessed|TradeId|CounterpartyOfficeId|ReasonCodeId|CommissionBasis|CancelReasonCode|TradeType|TargetQuantity|OriginalFace|Factor|LookupOrderId|DataProviderKey2|SwapBasketId|SecType|FxType|FromCurrency|ToCurrency|ExecutionAmount|NetTradeFlag|CommissionAmount|USDFxRate|NetCounterAmount|GenevaId|FixedCurrencyInd|GenericInv|TargetAmount|SwapInstrumentId|AccountStrategy|AllocationReason|BrokerReason|IsBondFuture|DataProviderKey3|DataProviderKey4|GSTLocal|NFALocal|GSTSettlement|NFASettlement|ExecutionDateTime|AccountFwdHedgeClass|TradeFwdHedgeClass|NDFFlag|FixingDate|BMSTradeID|BMSAssetId|GlobalFacilityAmount|ParNearPar|TradesFlat|DelayedCompIndex|DelayedCompRate|DelayedCompAccrualDaysPerYear|FormOfPurchase|PurchaseType|MarketTradeType|FacilityTradeDocType|SaleClass|FeeCode1|FeeCode1Value|FeeCode2|FeeCode2Value|QtyRecalculateFlag|TradeAccruedInterestType|Markitwire_ID|AllocationId|ProtectionSide|InitialMarginAmount|InitialMarginPct|InitialMarginCurrency|ConfirmationPlatform|CalculationAgent|MasterDocumentDate|RemainingParty|Amortization|TradeKeyValues|AllocationCount|FeeCode3|FeeCode3Value|FeeCode4|FeeCode4Value|FeeCode5|FeeCode5Value|FeeCode6|FeeCode6Value|ClearingBroker|ClearingHouse|TradeRefId|SpecialInstructions|InitialMargin|InitialMarginType|InitialMarginSwapCurrency|RestructuringType|IsSynthetic|FileName|CDSTradeType|MasterDocumentTransType|ActualSettleDate|Transferor|Transferee|MessageId|SMGOrderId|SMGTradeId|NetSettlementAmount|DMAIndicator|BreakClauseDate
 QKFX4HK|11637333|18890072|1|B|JPMA||AUD|USD|.7499000000|733293.0000000000|4.356893720000000|20161215|20161219|0|.0000000000|.0000000000|.0000000000|3194879.6666199600|1.0000063630|.0000000000|.0000000000|.0000000000|.0000000000|.0000000000|3.267234600628000|.0000000000|2395840.2619983080|.7499047716|.0000000000|.0000000000|.0000000000|.0000000000|.0000000000||.0000000000||||||User1|18890072|243712458|481354c5-d183-4a9e-846e-13b21f932346|20161215|2016-12-15 06:31:25|0|0|0|N|N|N|ASX|||crilhac1||N|2486057|JPMA|0|BP||A|733293.0000000000|.0000000000|1.0000000000|0|SCG.AX||REIT|ALL|||3194879.6700000000|A|319.4900000000|.7406000000|3195199.1600000000|||0|3270486.7800000000|0|LPXD PARIS|DMA||N|||.0000000000|.0000000000|.0000000000|.0000000000|2016-12-15 16:10:00||||1900-01-01 00:00:00|||||||||||||||.0000000000||.0000000000|N||||||||||||||||.0000000000||.0000000000||.0000000000||.0000000000|||2433283|||||||CRD.CS_SMG_DW_APAC.Trade.0000359644||||||212854|SMG_243712458|SMG_18890072|2396079.8500|SMG_DMA|
 QKFX4HK|11637319|18890073|1|B|JPMA||AUD|USD|.7499000000|54454.0000000000|2.162433610000000|20161215|20161219|0|.0000000000|.0000000000|.0000000000|117753.1597989400|1.0003977810|.0000000000|.0000000000|.0000000000|.0000000000|.0000000000|1.621608964139000|.0000000000|88303.0945332251|.7501982960|.0000000000|.0000000000|.0000000000|.0000000000|.0000000000||.0000000000||||||User1|18890073|243712460|3b577425-ccdc-4763-b9cf-abbe8d183ef0|20161215|2016-12-15 06:31:25|0|0|0|N|N|N|ASX|||crilhac1||N|2486058|JPMA|0|BP||A|54454.0000000000|.0000000000|1.0000000000|0|SCP.AX||REIT|ALL|||117753.1600000000|A|11.7800000000|.7406000000|117764.9400000000|||0|119254.2600000000|0|LPXD PARIS|DMA||N|||.0000000000|.0000000000|.0000000000|.0000000000|2016-12-15 14:46:00||||1900-01-01 00:00:00|||||||||||||||.0000000000||.0000000000|N||||||||||||||||.0000000000||.0000000000||.0000000000||.0000000000|||2433284|||||||CRD.CS_SMG_DW_APAC.Trade.0000359644||||||212854|SMG_243712460|SMG_18890073|88311.9300|SMG_DMA|
 ";
-        
+
         }
-        
+
         [Fact]
         public void XML_to_CSV_Test()
-        {        
+        {
             var result = _converter.XML_to_CSV(_xml_doc);
 
             // multiline string below
-            var expected = 
+            var expected =
 @"11644324,248357100,SELLL,1634086
 11644324,248357100,SELLL,1637606
 ";
@@ -61,23 +62,74 @@ QKFX4HK|11637319|18890073|1|B|JPMA||AUD|USD|.7499000000|54454.0000000000|2.16243
         [Fact]
         public void CSV_to_Order()
         {
-            var result = _converter.CSV_to_Order(_csv_doc);
-            Assert.Equal(result[0].AccountId, "QKFX4HK");
-            Assert.Equal(result[0].InstrumentId, 11637333);
-            Assert.Equal(result[0].TNumber, 18890072);
-            Assert.Equal(result[0].TVersion, 1);
-            Assert.Equal(result[0].TAction, "B");
-            Assert.Equal(result[0].CorrectFlag, "N");
-            Assert.Equal(result[0].CancelFlag, "N");
-            Assert.Equal(result[0].NDDFlag, String.Empty);
-            Assert.Equal(result[1].AccountId, "QKFX4HK");
-            Assert.Equal(result[1].InstrumentId, 11637319);
-            Assert.Equal(result[1].TNumber, 18890073);
-            Assert.Equal(result[1].TVersion, 1);
-            Assert.Equal(result[1].TAction, "B");
-            Assert.Equal(result[1].CorrectFlag, "N");
-            Assert.Equal(result[1].CancelFlag, "N");
-            Assert.Equal(result[1].NDDFlag, String.Empty);
+            var results = _converter.CSV_to_Order(_csv_doc);
+            var expected = new TOrder[] { new TOrder() {
+                                            AccountId = "QKFX4HK",
+                                            InstrumentId = 11637333,
+                                            TNumber = 18890072,
+                                            TVersion = 1,
+                                            TAction = "B",
+                                            CorrectFlag = "N",
+                                            CancelFlag = "N",
+                                            NDDFlag = String.Empty},
+                                          new TOrder() {
+                                            AccountId = "QKFX4HK",
+                                            InstrumentId = 11637319,
+                                            TNumber = 18890073,
+                                            TVersion = 1,
+                                            TAction = "B",
+                                            CorrectFlag = "N",
+                                            CancelFlag = "N",
+                                            NDDFlag = String.Empty}
+            };
+
+            var i = 0;
+
+            foreach (TOrder result in results)
+            {
+                Assert.Equal(expected[i].AccountId, result.AccountId);
+                Assert.Equal(expected[i].InstrumentId, result.InstrumentId);
+                Assert.Equal(expected[i].TNumber, result.TNumber);
+                Assert.Equal(expected[i].TVersion, result.TVersion);
+                Assert.Equal(expected[i].TAction, result.TAction);
+                Assert.Equal(expected[i].CorrectFlag, result.CorrectFlag);
+                Assert.Equal(expected[i].CancelFlag, result.CancelFlag);
+                Assert.Equal(expected[i].NDDFlag, result.NDDFlag);
+                i++;
+            }
+        }
+
+        [Fact]
+        public void XMLToJson_Test()
+        {
+            var result = JsonConvert.DeserializeObject(_converter.XML_to_JSON(_xml_doc));
+            Console.WriteLine($"The Result XML to JSON: {result}");
+            var expected_json = @"
+                {""Trade"": 
+                    {   ""@delimiter"": ""~"",
+                        ""@header"": ""true"",
+                        ""@date"": ""2017-01-18 06:09:03"",
+                        ""@fileName"": ""CRD.CS_SMG_DW_APAC.Trade.0000389020"",
+                        ""@sequence"": ""389020"",
+                        ""@OUTPUT_LIMIT"": ""500"",
+                        ""@TRADED_SEC_EXPORT_ID"": ""0"",
+                        ""@OUTPUT_TYPE"": ""xml"",
+                        ""@part"": ""13"",
+                        ""row"": [{ ""EXT_SEC_ID"": ""11644324"",
+                                    ""#comment"": [],
+                                    ""SEC_ID"": ""248357100"",
+                                    ""ORDTR"": ""SELLL"",
+                                    ""REF_ID"": ""1634086"" },
+                                  { ""EXT_SEC_ID"": ""11644324"",
+                                    ""SEC_ID"": ""248357100"",
+                                    ""ORDTR"": ""SELLL"",
+                                    ""REF_ID"": ""1637606"" }]
+                    }
+            }";
+
+            var expected = JsonConvert.DeserializeObject(expected_json);
+
+            Assert.Equal(expected.ToString(), result.ToString());
         }
     }
 }
