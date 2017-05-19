@@ -20,6 +20,17 @@ namespace DataFormatConverter
         public string NDDFlag { get; set; }
     }
 
+    public class Trade
+    {
+		public int EXT_SEC_ID { get; set; }
+
+		public int SEC_ID { get; set; }
+
+		public string ORDTR { get; set; }
+
+		public int REF_ID { get; set; }
+    }
+
     public class Converter
     {
         public IEnumerable<TOrder> CSV_to_Order(string csv_doc)
@@ -93,6 +104,29 @@ namespace DataFormatConverter
             var jsonText = JsonConvert.SerializeXmlNode(doc);
 
             return jsonText;
+        }
+
+        public List<Trade> XML_to_TradeJson(string xml_doc)
+        {
+            XmlDocument doc = new XmlDocument();
+			doc.LoadXml(xml_doc);
+
+			var rows = doc.DocumentElement.GetElementsByTagName("row");
+			var TradeList = new List<Trade>();
+
+			foreach (XmlNode row in rows)
+			{
+				var Output = row.InnerXml;
+
+				var xml_row = new XmlDocument();
+				xml_row.LoadXml($"<row>{Output}</row>");
+
+                var json = JsonConvert.SerializeXmlNode(xml_row, Newtonsoft.Json.Formatting.Indented, true);
+
+                TradeList.Add(JsonConvert.DeserializeObject<Trade>(json));
+			}
+
+            return TradeList;
         }
     }
 }

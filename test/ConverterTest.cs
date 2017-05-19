@@ -2,12 +2,33 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using Xunit;
 using DataFormatConverter;
 using Newtonsoft.Json;
 
 namespace DataFormatConverter.Tests
 {
+    public class Trade
+    {
+        public string EXT_SEC_ID { get; set; }
+
+        public string SEC_ID { get; set; }
+
+        public string ORDTR { get; set; }
+
+        public string REF_ID { get; set; }
+
+    }
+
+    public class Account
+    {
+        public string Email { get; set; }
+        public bool Active { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public IList<string> Roles { get; set; }
+    }
+
     public class DataFormatConverterTest
     {
         private readonly Converter _converter;
@@ -105,25 +126,25 @@ QKFX4HK|11637319|18890073|1|B|JPMA||AUD|USD|.7499000000|54454.0000000000|2.16243
             var result = JsonConvert.DeserializeObject(_converter.XML_to_JSON(_xml_doc));
             Console.WriteLine($"The Result XML to JSON: {result}");
             var expected_json = @"
-                {""Trade"": 
-                    {   ""@delimiter"": ""~"",
-                        ""@header"": ""true"",
-                        ""@date"": ""2017-01-18 06:09:03"",
-                        ""@fileName"": ""CRD.CS_SMG_DW_APAC.Trade.0000389020"",
-                        ""@sequence"": ""389020"",
-                        ""@OUTPUT_LIMIT"": ""500"",
-                        ""@TRADED_SEC_EXPORT_ID"": ""0"",
-                        ""@OUTPUT_TYPE"": ""xml"",
-                        ""@part"": ""13"",
-                        ""row"": [{ ""EXT_SEC_ID"": ""11644324"",
-                                    ""#comment"": [],
-                                    ""SEC_ID"": ""248357100"",
-                                    ""ORDTR"": ""SELLL"",
-                                    ""REF_ID"": ""1634086"" },
-                                  { ""EXT_SEC_ID"": ""11644324"",
-                                    ""SEC_ID"": ""248357100"",
-                                    ""ORDTR"": ""SELLL"",
-                                    ""REF_ID"": ""1637606"" }]
+                {'Trade': 
+                    {   '@delimiter': '~',
+                        '@header': 'true',
+                        '@date': '2017-01-18 06:09:03',
+                        '@fileName': 'CRD.CS_SMG_DW_APAC.Trade.0000389020',
+                        '@sequence': '389020',
+                        '@OUTPUT_LIMIT': '500',
+                        '@TRADED_SEC_EXPORT_ID': '0',
+                        '@OUTPUT_TYPE': 'xml',
+                        '@part': '13',
+                        'row': [{ 'EXT_SEC_ID': '11644324',
+                                    '#comment': [],
+                                    'SEC_ID': '248357100',
+                                    'ORDTR': 'SELLL',
+                                    'REF_ID': '1634086' },
+                                  { 'EXT_SEC_ID': '11644324',
+                                    'SEC_ID': '248357100',
+                                    'ORDTR': 'SELLL',
+                                    'REF_ID': '1637606' }]
                     }
             }";
 
@@ -131,5 +152,25 @@ QKFX4HK|11637319|18890073|1|B|JPMA||AUD|USD|.7499000000|54454.0000000000|2.16243
 
             Assert.Equal(expected.ToString(), result.ToString());
         }
+
+        [Fact]
+        public void DeserializeJSON_Test()
+        {
+            var expected = new List<String>();
+
+            expected.Add(@"{""EXT_SEC_ID"":11644324,""SEC_ID"":248357100,""ORDTR"":""SELLL"",""REF_ID"":1634086}");
+			expected.Add(@"{""EXT_SEC_ID"":11644324,""SEC_ID"":248357100,""ORDTR"":""SELLL"",""REF_ID"":1637606}");
+
+			var tradelist = _converter.XML_to_TradeJson(_xml_doc);
+            var i = 0;
+            foreach (var trade in tradelist) {
+                var tradeObj = JsonConvert.SerializeObject(trade);
+                Console.WriteLine($"JSON MSG: {tradeObj}");
+                Assert.Equal(expected[i], tradeObj);
+                i++;
+            }
+
+        }
+
     }
 }
