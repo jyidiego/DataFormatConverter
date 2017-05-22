@@ -97,35 +97,39 @@ namespace DataFormatConverter
             }
         }
 
-        public string XML_to_JSON(string xml_doc)
-        {
-            var doc = new XmlDocument();
-            doc.LoadXml(xml_doc);
-            var jsonText = JsonConvert.SerializeXmlNode(doc);
-
-            return jsonText;
-        }
-
         public List<Trade> XML_to_TradeJson(string xml_doc)
         {
-            XmlDocument doc = new XmlDocument();
-			doc.LoadXml(xml_doc);
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(xml_doc);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception Loading XML Document");
+                throw;
+            }
 
-			var rows = doc.DocumentElement.GetElementsByTagName("row");
-			var TradeList = new List<Trade>();
+            try
+            {
+                var rows = doc.DocumentElement.GetElementsByTagName("row");
+                var TradeList = new List<Trade>();
+                foreach (XmlNode row in rows)
+                {
+                    var Output = row.InnerXml;
+                    var xml_row = new XmlDocument();
+                    xml_row.LoadXml($"<row>{Output}</row>");
 
-			foreach (XmlNode row in rows)
-			{
-				var Output = row.InnerXml;
+                    var json = JsonConvert.SerializeXmlNode(xml_row, Newtonsoft.Json.Formatting.Indented, true);
 
-				var xml_row = new XmlDocument();
-				xml_row.LoadXml($"<row>{Output}</row>");
-
-                var json = JsonConvert.SerializeXmlNode(xml_row, Newtonsoft.Json.Formatting.Indented, true);
-
-                TradeList.Add(JsonConvert.DeserializeObject<Trade>(json));
-			}
-
+                    TradeList.Add(JsonConvert.DeserializeObject<Trade>(json));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception Processing XML Document");
+                throw;
+            }
             return TradeList;
         }
     }

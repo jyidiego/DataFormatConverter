@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -120,38 +121,6 @@ QKFX4HK|11637319|18890073|1|B|JPMA||AUD|USD|.7499000000|54454.0000000000|2.16243
             }
         }
 
-        [Fact]
-        public void XMLToJson_Test()
-        {
-            var result = JsonConvert.DeserializeObject(_converter.XML_to_JSON(_xml_doc));
-            Console.WriteLine($"The Result XML to JSON: {result}");
-            var expected_json = @"
-                {'Trade': 
-                    {   '@delimiter': '~',
-                        '@header': 'true',
-                        '@date': '2017-01-18 06:09:03',
-                        '@fileName': 'CRD.CS_SMG_DW_APAC.Trade.0000389020',
-                        '@sequence': '389020',
-                        '@OUTPUT_LIMIT': '500',
-                        '@TRADED_SEC_EXPORT_ID': '0',
-                        '@OUTPUT_TYPE': 'xml',
-                        '@part': '13',
-                        'row': [{ 'EXT_SEC_ID': '11644324',
-                                    '#comment': [],
-                                    'SEC_ID': '248357100',
-                                    'ORDTR': 'SELLL',
-                                    'REF_ID': '1634086' },
-                                  { 'EXT_SEC_ID': '11644324',
-                                    'SEC_ID': '248357100',
-                                    'ORDTR': 'SELLL',
-                                    'REF_ID': '1637606' }]
-                    }
-            }";
-
-            var expected = JsonConvert.DeserializeObject(expected_json);
-
-            Assert.Equal(expected.ToString(), result.ToString());
-        }
 
         [Fact]
         public void DeserializeJSON_Test()
@@ -169,7 +138,21 @@ QKFX4HK|11637319|18890073|1|B|JPMA||AUD|USD|.7499000000|54454.0000000000|2.16243
                 Assert.Equal(expected[i], tradeObj);
                 i++;
             }
+        }
 
+        [Fact]
+        public void XMLFile_to_JSON()
+        {
+            String xml_doc = File.ReadAllText("../../../Tradexml.xml");
+
+            var tradelist = _converter.XML_to_TradeJson(xml_doc);
+
+            foreach (var trade in tradelist)
+            {
+                var tradeObj = JsonConvert.SerializeObject(trade);
+                Console.WriteLine($"JSON MSG: {tradeObj}");
+
+            }
         }
 
     }
