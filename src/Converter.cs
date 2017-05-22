@@ -103,15 +103,7 @@ namespace DataFormatConverter
             {
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(xml_doc);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception Loading XML Document");
-                throw;
-            }
 
-            try
-            {
                 var rows = doc.DocumentElement.GetElementsByTagName("row");
                 var TradeList = new List<Trade>();
                 foreach (XmlNode row in rows)
@@ -124,13 +116,15 @@ namespace DataFormatConverter
 
                     TradeList.Add(JsonConvert.DeserializeObject<Trade>(json));
                 }
+
+            return TradeList;
+
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception Processing XML Document");
+                Console.WriteLine($"Exception Processing XML Document: {e}");
                 throw;
             }
-            return TradeList;
         }
     }
 }
