@@ -143,7 +143,7 @@ QKFX4HK|11637319|18890073|1|B|JPMA||AUD|USD|.7499000000|54454.0000000000|2.16243
         [Fact]
         public void XMLFile_to_JSON()
         {
-            String xml_doc = File.ReadAllText("../../../Tradexml.xml");
+            String xml_doc = File.ReadAllText("../../../tradexml.xml");
 
             var tradelist = _converter.XML_to_TradeJson(xml_doc);
 
@@ -151,7 +151,6 @@ QKFX4HK|11637319|18890073|1|B|JPMA||AUD|USD|.7499000000|54454.0000000000|2.16243
             {
                 var tradeObj = JsonConvert.SerializeObject(trade);
                 Console.WriteLine($"JSON MSG: {tradeObj}");
-
             }
         }
 
