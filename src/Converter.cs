@@ -123,6 +123,8 @@ namespace DataFormatConverter
             catch (Exception e)
             {
                 Console.WriteLine($"Exception Processing XML Document: {e}");
+                Console.WriteLine($"XML Message: {xml_doc}");
+                Console.WriteLine($"Message Length: {xml_doc.Length}");
                 throw;
             }
         }
