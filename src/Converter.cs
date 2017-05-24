@@ -120,7 +120,7 @@ namespace DataFormatConverter
             return TradeList;
 
             }
-            catch (Exception e) // Catch an exception
+            catch (Exception e)
             {
                 Console.WriteLine($"Exception Processing XML Document: {e}");
                 Console.WriteLine($"XML Message: {xml_doc}");
